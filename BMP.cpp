@@ -40,7 +40,7 @@ BMP::BMP(const std::string & fileName){
     }
 }
 
-BMP::BMP(const unsigned long _width, const unsigned long _height){
+BMP::BMP(const unsigned long _width, const unsigned long _height, const TColor& color){
 
     // Заголовок файла
     bitMapFileHeader.type       = 0x4D42; // Сигнатура BM
@@ -69,9 +69,9 @@ BMP::BMP(const unsigned long _width, const unsigned long _height){
     // Изображение
     for(size_t j = 0; j < bitMapInfoHeader.height; ++j)
         for(size_t i = 0; i < bitMapInfoHeader.width; ++i){
-            image[i][j].B = 0x0;
-            image[i][j].G = 0x0;
-            image[i][j].R = 0x0;
+            image[i][j].B = color.B;
+            image[i][j].G = color.G;
+            image[i][j].R = color.R;
         }
 
 }

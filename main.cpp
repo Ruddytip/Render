@@ -3,15 +3,27 @@
 int main() {
     const unsigned long width = 1000;
     const unsigned long height = 1000;
-    BMP image(width, height);
+    BMP output(width, height, TColor{100, 200, 100});
+
     TModel model("obj/african_head/african_head.obj");
     // TModel model("obj/diablo3_pose/diablo3_pose.obj");
     // TModel model("obj/boggie/body.obj");
-    // model.drawMesh(image);
-    model.drawMeshTriangle(image);
-    BMP zbf(width, height);
-    model.drawZ_buffer(zbf);
-    image.writeToFile("output.bmp");
-    zbf.writeToFile("zbf.bmp");
+    // TModel model("test.obj");
+
+    BMP texture("obj/african_head/african_head_diffuse.bmp");
+    // BMP texture("obj/diablo3_pose/diablo3_pose_diffuse.bmp");
+    // BMP texture("texture.bmp");
+
+    // model.drawMesh(output);
+    // model.drawMeshTriangle(output);
+    // model.draw_UV_map(texture);
+    model.drawMeshTexture(output, texture);
+
+    output.writeToFile("output.bmp");
+
+    // BMP zbf(width, height);
+    // model.drawZ_buffer(zbf);
+    // zbf.writeToFile("zbf.bmp");
+
     return 0;
 }

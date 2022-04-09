@@ -68,17 +68,16 @@ typedef Vec3<int> Vec3i;
 typedef Vec3<double> Vec3d;
 
 struct face{
-	std::vector<int> id_v;
-	std::vector<int> id_vt;
-	std::vector<int> id_vn;
-	int id_m;
+	Vec3i id_v;
+	Vec3i id_vt;
+	Vec3i id_vn;
 };
 
-struct object{
-	std::string name;
-	std::vector<face> faces;
-	bool visible;
-};
+// struct object{
+// 	std::string name;
+// 	std::vector<face> faces;
+// 	bool visible;
+// };
 
 // struct texture{
 // 	std::string name;

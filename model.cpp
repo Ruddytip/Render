@@ -50,12 +50,11 @@ bool inTriangle(const Vec2i p, const Vec3d* t){
     return (q0 >= 0 && q1 >= 0 && q2 >= 0) || (q0 <= 0 && q1 <= 0 && q2 <= 0);
 }
 
-bool TModel::helpZ(BMP& image, const Vec2i point, const Vec3d* t){
-    int width = image.getWidth(), height = image.getHeight();
-    if(point.x<0 || point.y<0 || point.x>=width || point.y>=height) return false;
+bool TModel::helpZ(const Vec2i scr, const Vec2i point, const Vec3d* t){
+    if(point.x < 0 || point.y < 0 || point.x >= scr.x || point.y >= scr.y) return false;
     Vec3d normal = (t[0] - t[1]) ^ (t[0] - t[2]);
     double z = (-normal.x * (point.x - t[0].x) - normal.y * (point.y - t[0].y) + normal.z * t[0].z) / normal.z;
-    unsigned long index = point.x + point.y * width;
+    unsigned long index = point.x + point.y * scr.x;
         if(z > z_buffer[index]){
             z_buffer[index] = z;
             return true;
@@ -64,6 +63,7 @@ bool TModel::helpZ(BMP& image, const Vec2i point, const Vec3d* t){
 }
 
 void TModel::triangle(BMP& image, const Vec3d* t, const TColor& color){
+    Vec2i scr(image.getWidth(), image.getHeight());
     Vec3d Min = t[0], Max = t[0];
     for(int i = 1; i < 3; ++i){
         Min.x = t[i].x < Min.x? t[i].x: Min.x; Max.x = t[i].x > Max.x? t[i].x: Max.x;
@@ -73,47 +73,115 @@ void TModel::triangle(BMP& image, const Vec3d* t, const TColor& color){
         for(int i = Min.x; i <= Max.x; ++i){
             Vec2i point(i, j);
             if(inTriangle(point, t))
-                if(helpZ(image, point, t))
+                if(helpZ(scr, point, t))
                     image.setPixel(i, j, color);
         }
     }
 }
 
-// void TModel::triangle(BMP& image, const Vec3d* t, int id_o, int id_f, double nor){
-//     Vec3d Min = t[0], Max = t[0];
-//     for(int i = 1; i < 3; ++i){
-//         Min.x = t[i].x < Min.x? t[i].x: Min.x; Max.x = t[i].x > Max.x? t[i].x: Max.x;
-//         Min.y = t[i].y < Min.y? t[i].y: Min.y; Max.y = t[i].y > Max.y? t[i].y: Max.y;
-//     }
+void TModel::triangle(BMP& image, const Vec3d* t, int id_f, BMP& texture){
+    Vec2i scr(image.getWidth(), image.getHeight());
+    Vec2i scrT(texture.getWidth(), texture.getHeight());
 
-//     Vec2d Mint = Vec2d(uv[objects[id_o].faces[id_f].id_vt[0]].x, uv[objects[id_o].faces[id_f].id_vt[0]].y);
-//     Vec2d Maxt = Vec2d(uv[objects[id_o].faces[id_f].id_vt[0]].x, uv[objects[id_o].faces[id_f].id_vt[0]].y);
-//     for(int i = 1; i < 3; ++i){
-//         Mint.x = uv[objects[id_o].faces[id_f].id_vt[i]].x<Mint.x?uv[objects[id_o].faces[id_f].id_vt[i]].x:Mint.x;
-//         Mint.y = uv[objects[id_o].faces[id_f].id_vt[i]].y<Mint.y?uv[objects[id_o].faces[id_f].id_vt[i]].y:Mint.y;
-//         Maxt.x = uv[objects[id_o].faces[id_f].id_vt[i]].x>Maxt.x?uv[objects[id_o].faces[id_f].id_vt[i]].x:Maxt.x;
-//         Maxt.y = uv[objects[id_o].faces[id_f].id_vt[i]].y>Maxt.y?uv[objects[id_o].faces[id_f].id_vt[i]].y:Maxt.y;
-//     }
+    Vec2d tmin(uv[faces[id_f].id_vt.x].x * scrT.x, uv[faces[id_f].id_vt.x].y * scrT.y);
+    Vec2d tmax = tmin;
+    tmin.x = (uv[faces[id_f].id_vt.y].x * scrT.x < tmin.x ? uv[faces[id_f].id_vt.y].x * scrT.x:  tmin.x);
+    tmin.y = (uv[faces[id_f].id_vt.y].y * scrT.y < tmin.y ? uv[faces[id_f].id_vt.y].y * scrT.y:  tmin.y);
 
-//     for(int j = Min.y; j <= Max.y; ++j){
-//         for(int i = Min.x; i <= Max.x; ++i){
-//             Vec2i point(i, j);
-//             if(inTriangle(point, t))
-//                 if(helpZ(image, point, t)){
-//                     double x = range(i, Max.x, Min.x, Mint.x, Maxt.x);
-//                     double y = range(j, Min.y, Max.y, Mint.y, Maxt.y);
-//                     // TGAImage txt = textures[materials[objects[id_o].faces[id_f].id_m].map_Kd].rect;
-//                     // TColor c = txt.get(x * txt.get_width(), y * txt.get_height());
-//                     // image.setPixel(i, j, TColor{c.R, c.G, c.B});
-//                 }                        
-//         }
-//     }
-// }
+    tmin.x = (uv[faces[id_f].id_vt.z].x * scrT.x < tmin.x ? uv[faces[id_f].id_vt.z].x * scrT.x:  tmin.x);
+    tmin.y = (uv[faces[id_f].id_vt.z].y * scrT.y < tmin.y ? uv[faces[id_f].id_vt.z].y * scrT.y:  tmin.y);
+
+    tmax.x = (uv[faces[id_f].id_vt.y].x * scrT.x > tmax.x ? uv[faces[id_f].id_vt.y].x * scrT.x:  tmax.x);
+    tmax.y = (uv[faces[id_f].id_vt.y].y * scrT.y > tmax.y ? uv[faces[id_f].id_vt.y].y * scrT.y:  tmax.y);
+
+    tmax.x = (uv[faces[id_f].id_vt.z].x * scrT.x > tmax.x ? uv[faces[id_f].id_vt.z].x * scrT.x:  tmax.x);
+    tmax.y = (uv[faces[id_f].id_vt.z].y * scrT.y > tmax.y ? uv[faces[id_f].id_vt.z].y * scrT.y:  tmax.y);
+
+    Vec3d Min = t[0], Max = t[0];
+    for(int i = 1; i < 3; ++i){
+        Min.x = t[i].x < Min.x? t[i].x: Min.x; Max.x = t[i].x > Max.x? t[i].x: Max.x;
+        Min.y = t[i].y < Min.y? t[i].y: Min.y; Max.y = t[i].y > Max.y? t[i].y: Max.y;
+    }
+    for(int j = Min.y; j <= Max.y; ++j){
+        for(int i = Min.x; i <= Max.x; ++i){
+            Vec2i point(i, j);
+            if(inTriangle(point, t))
+                if(helpZ(scr, point, t)){
+                    int x = range(i, Min.x, Max.x, tmin.x, tmax.x);
+                    int y = range(j, Min.y, Max.y, tmin.y, tmax.y);
+                    TColor color = texture.getPixel(x, y);
+                    image.setPixel(i, j, color);
+                }
+        }
+    }
+
+}
 
 void minMax(const Vec3d p, Vec3d& min, Vec3d& max){
     min.x = (p.x < min.x ? p.x : min.x); max.x = (p.x > max.x ? p.x : max.x);
     min.y = (p.y < min.y ? p.y : min.y); max.y = (p.y > max.y ? p.y : max.y);
     min.z = (p.z < min.z ? p.z : min.z); max.z = (p.z > max.z ? p.z : max.z);
+}
+
+void TModel::parser_VERTS(const std::string& line){
+    std::stringstream iss(line);
+    std::string trash;
+    iss >> trash; Vec3d point;
+    iss >> trash; point.x = std::stod(trash);
+    iss >> trash; point.y = std::stod(trash);
+    iss >> trash; point.z = std::stod(trash);
+    minMax(point, min, max);
+    verts.push_back(point);
+}
+
+void TModel::parser_VT(const std::string& line){
+    std::stringstream iss(line);
+    std::string trash;
+    iss >> trash; Vec2d point;
+    iss >> trash; point.x = std::stod(trash);
+    iss >> trash; point.y = std::stod(trash);
+    uv.push_back(point);
+}
+
+void TModel::parser_VN(const std::string& line){
+    std::stringstream iss(line);
+    std::string trash;
+    iss >> trash; Vec3d point;
+    iss >> trash; point.x = std::stod(trash);
+    iss >> trash; point.y = std::stod(trash);
+    iss >> trash; point.z = std::stod(trash);
+    normals.push_back(point);
+}
+
+void TModel::parser_FACES(const std::string& line){
+    std::stringstream iss(line);
+    std::string trash;
+    face fc;
+    Vec3i point;
+    Vec3i pointUV;
+    Vec3i pointNRM;
+    iss >> trash;
+
+    iss >> trash;
+    point.x    = std::stoi(trash.substr(0, trash.find('/'))) - 1;
+    pointUV.x  = std::stoi(trash.substr(trash.find('/') + 1, trash.find_last_of('/'))) - 1;
+    pointNRM.x = std::stoi(trash.substr(trash.find_last_of('/') + 1, trash.length() - 1)) - 1;
+
+
+    iss >> trash;
+    point.y    = std::stoi(trash.substr(0, trash.find('/'))) - 1;
+    pointUV.y  = std::stoi(trash.substr(trash.find('/') + 1, trash.find_last_of('/'))) - 1;
+    pointNRM.y = std::stoi(trash.substr(trash.find_last_of('/') + 1, trash.length() - 1)) - 1;
+
+    iss >> trash;
+    point.z    = std::stoi(trash.substr(0, trash.find('/'))) - 1;
+    pointUV.z  = std::stoi(trash.substr(trash.find('/') + 1, trash.find_last_of('/'))) - 1;
+    pointNRM.z = std::stoi(trash.substr(trash.find_last_of('/') + 1, trash.length() - 1)) - 1;
+
+    fc.id_v  = point;
+    fc.id_vt = pointUV;
+    fc.id_vn = pointNRM;
+    faces.push_back(fc);
 }
 
 void TModel::parser_OBJ(const std::string& filename){
@@ -122,23 +190,19 @@ void TModel::parser_OBJ(const std::string& filename){
     if(in.fail()) return;
 
     while(!in.eof()){
-        std::string line, trash;
+        std::string line;
         std::getline(in, line);
-        std::stringstream iss(line);
         if(!line.compare(0, 2, "v ")){
-            iss >> trash; Vec3d point;
-            iss >> trash; point.x = std::stod(trash);
-            iss >> trash; point.y = std::stod(trash);
-            iss >> trash; point.z = std::stod(trash);
-            minMax(point, min, max);
-            verts.push_back(point);
+            parser_VERTS(line);
+        }
+        if(!line.compare(0, 3, "vt ")){
+            parser_VT(line);
+        }
+        if(!line.compare(0, 3, "vn ")){
+            parser_VN(line);
         }
         if(!line.compare(0, 2, "f ")){
-            iss >> trash; Vec3i edge;
-            iss >> trash; edge.x = std::stod(trash.substr(0, trash.find('/'))) - 1;
-            iss >> trash; edge.y = std::stod(trash.substr(0, trash.find('/'))) - 1;
-            iss >> trash; edge.z = std::stod(trash.substr(0, trash.find('/'))) - 1;
-            faces.push_back(edge);
+            parser_FACES(line);
         }
     }
 
@@ -228,9 +292,23 @@ void TModel::drawZ_buffer(BMP& image){
     mn = mx = z_buffer[0];
     for(int j = 0; j < height; ++j)
         for(int i = 0; i < width; ++i){
-            byte1 color = range(z_buffer[i + j * width] + min.z, min.z, max.z, 0, 255);
-            image.setPixel(i, j, TColor{color, color, color});
+            TColor color{120, 0, 120};
+            if(z_buffer[i + j * width] != -std::numeric_limits<double>::max()){
+                byte1 c = range(z_buffer[i + j * width] + min.z, min.z, max.z, 0, 255);
+                color = {c, c, c}; 
+            }
+            image.setPixel(i, j, color);
         }
+}
+
+void TModel::draw_UV_map(BMP& image){
+    Vec2i scr(image.getWidth(), image.getHeight());
+
+    for (unsigned int id_f = 0; id_f < faces.size(); ++id_f){
+        line(image, Vec2i(uv[faces[id_f].id_vt.x].x * scr.x, uv[faces[id_f].id_vt.x].y * scr.y), Vec2i(uv[faces[id_f].id_vt.y].x * scr.x, uv[faces[id_f].id_vt.y].y * scr.y), TColor{255, 0, 0});
+        line(image, Vec2i(uv[faces[id_f].id_vt.y].x * scr.x, uv[faces[id_f].id_vt.y].y * scr.y), Vec2i(uv[faces[id_f].id_vt.z].x * scr.x, uv[faces[id_f].id_vt.z].y * scr.y), TColor{255, 0, 0});
+        line(image, Vec2i(uv[faces[id_f].id_vt.z].x * scr.x, uv[faces[id_f].id_vt.z].y * scr.y), Vec2i(uv[faces[id_f].id_vt.x].x * scr.x, uv[faces[id_f].id_vt.x].y * scr.y), TColor{255, 0, 0});
+    }
 }
 
 // void TModel::drawMaterial(HDC hdc){
@@ -262,9 +340,9 @@ void TModel::drawMesh(BMP& image){
     
     for (unsigned long id_f = 0; id_f < faces.size(); ++id_f) {
         Vec2i screen_coords[3];
-        for (int i = 0; i < 3; ++i) {
-            Vec3d world_coords = verts[faces[id_f][i]] + pos;
-            screen_coords[i] = Vec2i(world_coords.x * scr.x, world_coords.y * scr.y);
+        for (int id_v = 0; id_v < 3; ++id_v) {
+            Vec3d world_coords = verts[faces[id_f].id_v[id_v]] + pos;
+            screen_coords[id_v] = Vec2i(world_coords.x * scr.x, world_coords.y * scr.y);
 
         }
         line(image, screen_coords[0], screen_coords[1], TColor{255, 255, 255});
@@ -282,9 +360,9 @@ void TModel::drawMeshTriangle(BMP& image){
         for(unsigned int id_f = 0; id_f < faces.size(); ++id_f){
             Vec3d screen_coords[3];
             Vec3d world_coords[3];
-            for (int i = 0; i < 3; ++i) {
-                world_coords[i] = verts[faces[id_f][i]] + pos;
-                screen_coords[i] = Vec3d(world_coords[i].x * scr.x / 2, world_coords[i].y * scr.y / 2, world_coords[i].z);
+            for (int id_v = 0; id_v < 3; ++id_v) {
+                world_coords[id_v] = verts[faces[id_f].id_v[id_v]] + pos;
+                screen_coords[id_v] = Vec3d(world_coords[id_v].x * scr.x / 2, world_coords[id_v].y * scr.y / 2, world_coords[id_v].z);
             }
             Vec3d normal = (world_coords[0] - world_coords[1]) ^ (world_coords[0] - world_coords[2]);
             double intensity = normal.getCosAngle(Vec3d(0.0, 0.0, 1.0));
@@ -295,23 +373,23 @@ void TModel::drawMeshTriangle(BMP& image){
         }
 }
 
-// void TModel::drawMeshTexture(BMP& image){
-//     int width = image.getWidth(), height = image.getHeight();
-//     for(int i = 0; i < width * height; ++i) z_buffer[i] = -std::numeric_limits<double>::max();
-//     for(unsigned int id_o = 0; id_o < objects.size(); ++id_o){
-//         if(!objects[id_o].visible) continue;
-//         for (unsigned int id_f = 0; id_f < objects[id_o].faces.size(); ++id_f) {
-//             Vec3d screen_coords[3];
-//             Vec3d world_coords[3];
-//             for (int j = 0; j < 3; j++) {
-//                 world_coords[j] = verts[objects[id_o].faces[id_f].id_v[j]];
-//                 screen_coords[j] = (world_coords[j] - min) * scale;
-//                 screen_coords[j].y = height - screen_coords[j].y;
-//             }
-//             Vec3d normal = (world_coords[0] - world_coords[1]) ^ (world_coords[0] - world_coords[2]);
-//             double intensity = normal.getCosAngle(Vec3d(0.0, 0.0, 1.0));
-//             if(intensity > 0)
-//                 triangle(image, screen_coords, id_o, id_f, intensity);
-//         }
-//     }
-// }
+void TModel::drawMeshTexture(BMP& image, BMP& texture){
+    Vec2i scr(image.getWidth(), image.getHeight());
+    Vec3d pos = Vec3d(0.0, 0.0, 0.0) - min;
+    z_buffer = new double[scr.x * scr.y];
+    for(int i = 0; i < scr.x * scr.y; ++i) z_buffer[i] = -std::numeric_limits<double>::max();
+
+    for (unsigned int id_f = 0; id_f < faces.size(); ++id_f){
+        Vec3d screen_coords[3];
+        Vec3d world_coords[3];
+        for (int id_v = 0; id_v < 3; id_v++) {
+            world_coords[id_v] = verts[faces[id_f].id_v[id_v]] + pos;
+            screen_coords[id_v] = Vec3d(world_coords[id_v].x * scr.x / 2, world_coords[id_v].y * scr.y / 2, world_coords[id_v].z);
+        }
+        Vec3d normal = (world_coords[0] - world_coords[1]) ^ (world_coords[0] - world_coords[2]);
+        double intensity = normal.getCosAngle(Vec3d(0.0, 0.0, 1.0));
+        if(intensity > 0)
+            triangle(image, screen_coords, id_f, texture);
+    }
+
+}

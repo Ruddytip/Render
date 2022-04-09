@@ -37,7 +37,7 @@ struct BitMapInfoHeader{ // Информационный заголовок
 TColor** image; // Изображение, записанное по строкам слева направо и снизу вверх
 public:
 BMP(const std::string & fileName);
-BMP(const unsigned long _width, const unsigned long _height);
+BMP(const unsigned long _width, const unsigned long _height, const TColor& color);
 ~BMP();
 byte4 getWidth();
 byte4 getHeight();
