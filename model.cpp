@@ -79,24 +79,37 @@ void TModel::triangle(BMP& image, const Vec3d* t, const TColor& color){
     }
 }
 
-void TModel::triangle(BMP& image, const Vec3d* t, int id_f, BMP& texture){
+// p.x = w1 * b.x + w2 * c.x
+// p.y = w1 * b.y + w2 * c.y
+
+// w2 = (p.y - w1 * b.y) / c.y
+
+// w1 = (p.y * c.x - p.x * c.y) / (b.y * c.x - b.x * c.y)
+
+/*
+1. 
+*/
+
+TColor TModel::getColorTexture(const Vec2i point, const Vec3d* t, const int id_f, BMP& texture){
+    Vec2d p(point.x - t[0].x, point.y - t[0].y);
+    Vec3d AB(t[1] - t[0]);
+    Vec3d AC(t[2] - t[0]);
+    double w1 = (p.y * AC.x - p.x * AC.y) / (AB.y * AC.x - AB.x * AC.y);
+    double w2 = (p.y - w1 * AB.y) / AC.y;
+
+    Vec2d u0(uv[faces[id_f].id_vt.x].x, uv[faces[id_f].id_vt.x].y);
+    Vec2d u1(uv[faces[id_f].id_vt.y].x, uv[faces[id_f].id_vt.y].y);
+    Vec2d u2(uv[faces[id_f].id_vt.z].x, uv[faces[id_f].id_vt.z].y);
+
+    Vec2d t_AB(u1 - u0);
+    Vec2d t_AC(u2 - u0);
+    Vec2d t_point(u0.x + t_AB.x * w1 + t_AC.x * w2, u0.y + t_AB.y * w1 + t_AC.y * w2);
+
+    return texture.getPixel(t_point.x * texture.getWidth(), t_point.y * texture.getHeight());
+}
+
+void TModel::drawFace(BMP& image, const Vec3d* t, const int id_f, BMP& texture){
     Vec2i scr(image.getWidth(), image.getHeight());
-    Vec2i scrT(texture.getWidth(), texture.getHeight());
-
-    Vec2d tmin(uv[faces[id_f].id_vt.x].x * scrT.x, uv[faces[id_f].id_vt.x].y * scrT.y);
-    Vec2d tmax = tmin;
-    tmin.x = (uv[faces[id_f].id_vt.y].x * scrT.x < tmin.x ? uv[faces[id_f].id_vt.y].x * scrT.x:  tmin.x);
-    tmin.y = (uv[faces[id_f].id_vt.y].y * scrT.y < tmin.y ? uv[faces[id_f].id_vt.y].y * scrT.y:  tmin.y);
-
-    tmin.x = (uv[faces[id_f].id_vt.z].x * scrT.x < tmin.x ? uv[faces[id_f].id_vt.z].x * scrT.x:  tmin.x);
-    tmin.y = (uv[faces[id_f].id_vt.z].y * scrT.y < tmin.y ? uv[faces[id_f].id_vt.z].y * scrT.y:  tmin.y);
-
-    tmax.x = (uv[faces[id_f].id_vt.y].x * scrT.x > tmax.x ? uv[faces[id_f].id_vt.y].x * scrT.x:  tmax.x);
-    tmax.y = (uv[faces[id_f].id_vt.y].y * scrT.y > tmax.y ? uv[faces[id_f].id_vt.y].y * scrT.y:  tmax.y);
-
-    tmax.x = (uv[faces[id_f].id_vt.z].x * scrT.x > tmax.x ? uv[faces[id_f].id_vt.z].x * scrT.x:  tmax.x);
-    tmax.y = (uv[faces[id_f].id_vt.z].y * scrT.y > tmax.y ? uv[faces[id_f].id_vt.z].y * scrT.y:  tmax.y);
-
     Vec3d Min = t[0], Max = t[0];
     for(int i = 1; i < 3; ++i){
         Min.x = t[i].x < Min.x? t[i].x: Min.x; Max.x = t[i].x > Max.x? t[i].x: Max.x;
@@ -106,15 +119,12 @@ void TModel::triangle(BMP& image, const Vec3d* t, int id_f, BMP& texture){
         for(int i = Min.x; i <= Max.x; ++i){
             Vec2i point(i, j);
             if(inTriangle(point, t))
-                if(helpZ(scr, point, t)){
-                    int x = range(i, Min.x, Max.x, tmin.x, tmax.x);
-                    int y = range(j, Min.y, Max.y, tmin.y, tmax.y);
-                    TColor color = texture.getPixel(x, y);
+                if(helpZ(scr, point, t)){                    
+                    TColor color = getColorTexture(point, t, id_f, texture);
                     image.setPixel(i, j, color);
                 }
         }
     }
-
 }
 
 void minMax(const Vec3d p, Vec3d& min, Vec3d& max){
@@ -389,7 +399,7 @@ void TModel::drawMeshTexture(BMP& image, BMP& texture){
         Vec3d normal = (world_coords[0] - world_coords[1]) ^ (world_coords[0] - world_coords[2]);
         double intensity = normal.getCosAngle(Vec3d(0.0, 0.0, 1.0));
         if(intensity > 0)
-            triangle(image, screen_coords, id_f, texture);
+            drawFace(image, screen_coords, id_f, texture);
     }
 
 }

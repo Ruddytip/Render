@@ -1,9 +1,9 @@
 #include "model.hpp"
 
 int main() {
-    const unsigned long width = 1000;
+    const unsigned long width  = 1000;
     const unsigned long height = 1000;
-    BMP output(width, height, TColor{100, 200, 100});
+    BMP output(width, height, TColor{0, 0, 0});
 
     TModel model("obj/african_head/african_head.obj");
     // TModel model("obj/diablo3_pose/diablo3_pose.obj");
@@ -16,7 +16,7 @@ int main() {
 
     // model.drawMesh(output);
     // model.drawMeshTriangle(output);
-    // model.draw_UV_map(texture);
+    // model.draw_UV_map(output);
     model.drawMeshTexture(output, texture);
 
     output.writeToFile("output.bmp");

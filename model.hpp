@@ -16,8 +16,9 @@ class TModel{
 	double* z_buffer;
 	void line(BMP& image, Vec2i t0, Vec2i t1, const TColor& color);
 	void triangle(BMP& image, const Vec3d* t, const TColor& color);
-	void triangle(BMP& image, const Vec3d* t, int id_f, BMP& texture);
+	void drawFace(BMP& image, const Vec3d* t, const int id_f, BMP& texture);
 	bool helpZ(Vec2i scr, const Vec2i point, const Vec3d* t);
+	TColor getColorTexture(const Vec2i point, const Vec3d* t, const int id_f, BMP& texture);
 	// void printInfo();
 	// void initGroups();
 	// void initMaterials(std::string filename);
