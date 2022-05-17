@@ -2,7 +2,7 @@
 
 Matrix::Matrix(int r, int c) : data(std::vector<std::vector<double>>(r, std::vector<double>(c, 0.f))), rows(r), cols(c) {}
 
-Matrix::Matrix(std::vector<std::vector<double>> _data) : data(_data), rows(data.size()), cols(data[0].size()) {}
+Matrix::Matrix(std::vector<std::vector<double>> _data) : data(_data), rows(_data.size()), cols(_data[0].size()) {}
 
 int Matrix::nrows() { return rows; }
 

@@ -124,6 +124,16 @@ TModel::TModel(const std::string& filename){
     min.x = min.y = min.z =  std::numeric_limits<double>::max();
     parserFile(filename);
     size = max - min;
+
+    double f = 0;
+    if(f != 0){
+        f = f * 3.141592 / 180;
+        for(int i = 0; i < verts.size(); ++i){
+            verts[i].x = cos(f) * verts[i].x - sin(f) * verts[i].z;
+            verts[i].z = sin(f) * verts[i].x + cos(f) * verts[i].z;
+        }
+    }
+
 }
 
 TModel::~TModel() {

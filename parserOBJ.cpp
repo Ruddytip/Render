@@ -48,6 +48,7 @@ void TModel::parser_VT(const std::string& line){
     iss >> trash; Vec2d point;
     iss >> trash; point.x = std::stod(trash);
     iss >> trash; point.y = std::stod(trash);
+    if(point.y > 1) point.y = point.y - 1.;
     uv.push_back(point);
 }
 

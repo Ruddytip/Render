@@ -8,8 +8,8 @@ class Matrix {
 public:
     Matrix(int r = 4, int c = 4); // 4 - Default alloc
     Matrix(std::vector<std::vector<double>> _data);
-    inline int nrows();
-    inline int ncols();
+    int nrows();
+    int ncols();
     static Matrix identity(int dimensions);
     Matrix operator*(const Matrix& a);
     Matrix transpose();
