@@ -46,15 +46,20 @@ int main(){
     // Vec2d line1V(line1[0][0], line1[1][0]);
     // line(output, Vec2i(0, 0), line1V, TColor{255, 255, 255});
 
-    TModel model("obj/african_head/source/african_head.obj");
-    // TModel model("obj/tennyson/source/model.obj");
+    // TModel model("obj/african_head/source/african_head.obj");
+    TModel model("obj/tennyson/source/model.obj");
 
-    BMP texture("obj/african_head/textures/african_head_diffuse.bmp");
+    // BMP texture("obj/african_head/textures/african_head_diffuse.bmp");
     // BMP texture("obj/african_head/textures/african_head_nm_tangent.bmp");
     // BMP texture("obj/african_head/textures/african_head_spec.bmp");
+
+    // BMP texture("obj/tennyson/textures/hair.bmp");
     // BMP texture("obj/tennyson/textures/body.bmp");
+    // BMP texture("obj/tennyson/textures/shirt.bmp");
+    // BMP texture("obj/tennyson/textures/pants.bmp");
+
     // BMP texture("test_1.bmp");
-    // BMP texture("test_2.bmp");
+    BMP texture("test_2.bmp");
 
     // model.draw_UV_map(output);
     // model.drawMesh(output);
