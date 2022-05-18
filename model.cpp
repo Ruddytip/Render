@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 #include "model.hpp"
+#include "parserOBJ.hpp"
 
 void TModel::line(BMP& image, Vec2i t0, Vec2i t1, const TColor& color) {
     int x0 = t0.x, y0 = t0.y;
@@ -119,10 +120,23 @@ void TModel::drawFace(BMP& image, const Vec3d* t, const int id_f, BMP& texture, 
     }
 }
 
+void TModel::parserOBJFile(const std::string& filename){
+    MetaInfoOBJ _data;
+    ParserOBJ prs(&_data);
+    prs.parserFile(filename);
+    verts = _data.verts;
+    uv = _data.uv;
+    normals = _data.normals;
+    faces = _data.faces;
+    min = _data.min;
+    max = _data.max;
+    size = _data.size;
+}
+
 TModel::TModel(const std::string& filename){
     max.x = max.y = max.z = -std::numeric_limits<double>::max();
     min.x = min.y = min.z =  std::numeric_limits<double>::max();
-    parserFile(filename);
+    parserOBJFile(filename);
     size = max - min;
 
     double f = 0;

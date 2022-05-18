@@ -1,5 +1,4 @@
 #include "model.hpp"
-#include "matrix.hpp"
 
 void line(BMP& image, Vec2i t0, Vec2i t1, const TColor& color) {
     int x0 = t0.x, y0 = t0.y;
@@ -35,24 +34,12 @@ int main(){
     const unsigned long height = 1000;
     BMP output(width, height, TColor{100, 200, 100});
 
-    double f = 45 * 3.141592 / 180;
-    Matrix rot({
-            {cos(f), -sin(f)},
-            {sin(f), cos(f)}
-            });
-
-    // Matrix baz({{100, 0}});
-    // Matrix line1 = rot * baz;
-    // Vec2d line1V(line1[0][0], line1[1][0]);
-    // line(output, Vec2i(0, 0), line1V, TColor{255, 255, 255});
-
     // TModel model("obj/african_head/source/african_head.obj");
     TModel model("obj/tennyson/source/model.obj");
 
     // BMP texture("obj/african_head/textures/african_head_diffuse.bmp");
     // BMP texture("obj/african_head/textures/african_head_nm_tangent.bmp");
     // BMP texture("obj/african_head/textures/african_head_spec.bmp");
-
     // BMP texture("obj/tennyson/textures/hair.bmp");
     // BMP texture("obj/tennyson/textures/body.bmp");
     // BMP texture("obj/tennyson/textures/shirt.bmp");

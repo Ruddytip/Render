@@ -57,7 +57,7 @@ public:
 	// Возвращает длину вектора
 	double  operator !()					const { return sqrt(x * x + y * y + z * z); }
 	// Функции ===============================================================================================================
-	Vec3<double> norm()						{ *this = (*this) / !(*this); return this; }
+	Vec3<double> norm()						{ *this = (*this) / !(*this); return *this; }
 	// Возвращает 1.0 если направление векторов совпадает
 	double getCosAngle(const Vec3<T> &V)	const { return double((*this) * V) / (!(*this) * !V); }
 };
@@ -85,17 +85,17 @@ struct face{
 // };
 
 struct material{
-	std::string name;
-	Vec3d Ka;
-	Vec3d Kd;
-	Vec3d Ke;
-	Vec3d Ks;
-	double Ns;
-	double Ni;
-	double d;
-	int illum;
-	int map_Ka;
-	int map_Kd;
-	int map_Ks;
-	int map_D;
+	std::string name; // Название материала
+	Vec3d Ka; // Цвет окружающего освещения (0-1)
+	Vec3d Kd; // Диффузный цвет (0-1)
+	Vec3d Ks; // Цвет зеркального отражения (0-1)
+	double Ns; // Коэффициент зеркального отражения (0-1000)
+	double Ni; // Показатель преломления (0.001-10)
+	double d; // Прозрачность (иногда это указывается Tr)
+	int illum; // Модель освещения (0-10)
+	int map_Ka; // Карта затенения 
+	int map_Kd; // Карта текстуры
+	int map_Ks; // Карта зеркального отражения
+	int map_D; // Карта прозрачности
+	int map_Bump; // Карта нормалей
 };
