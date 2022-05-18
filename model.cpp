@@ -61,7 +61,8 @@ bool TModel::helpZ(const Vec2i scr, const Vec2i point, const Vec3d* t){
     return false;
 }
 
-void TModel::triangle(BMP& image, const Vec3d* t, const TColor& color){
+void TModel::triangle(BMP& image, const Vec3d* t, const int id_f){
+    double z = (t[0].z + t[1].z + t[2].z) / 3;
     Vec2i scr(image.getWidth(), image.getHeight());
     Vec3d Min = t[0], Max = t[0];
     for(int i = 1; i < 3; ++i){
@@ -72,8 +73,26 @@ void TModel::triangle(BMP& image, const Vec3d* t, const TColor& color){
         for(int i = Min.x; i <= Max.x; ++i){
             Vec2i point(i, j);
             if(inTriangle(point, t))
-                if(helpZ(scr, point, t))
-                    image.setPixel(i, j, color);
+                if(helpZ(scr, point, t)){
+                    Vec3d n0 = normals[faces[id_f].id_vn[0]].norm();
+                    Vec3d n1 = normals[faces[id_f].id_vn[1]].norm();
+                    Vec3d n2 = normals[faces[id_f].id_vn[2]].norm();
+
+                    double w0 = !(Vec3d(i, j, z) - t[0]);
+                    double w1 = !(Vec3d(i, j, z) - t[1]);
+                    double w2 = !(Vec3d(i, j, z) - t[2]);
+
+                    Vec2d p(i, j);
+                    Vec3d AB(t[1] - t[0]);
+                    Vec3d AC(t[2] - t[0]);
+                    double q1 = (p.y * AC.x - p.x * AC.y) / (AB.y * AC.x - AB.x * AC.y);
+                    double q2 = (p.y - w1 * AB.y) / AC.y;
+
+                    Vec3d n4 = n0 * (45 - w0) + n1 * (45 - w1) + n2 * (45 - w2);
+                    
+                    byte1 c = 255. * n4.getCosAngle(Vec3d(0.0, 0.0, 1.0));
+                    image.setPixel(i, j, TColor{c, c, c});
+                }
         }
     }
 }
@@ -230,8 +249,7 @@ void TModel::drawMeshTriangle(BMP& image){
             Vec3d normal = (world_coords[0] - world_coords[1]) ^ (world_coords[0] - world_coords[2]);
             double intensity = normal.getCosAngle(Vec3d(0.0, 0.0, 1.0));
             if (intensity > 0) {
-                byte1 color = intensity * 255;
-                triangle(image, screen_coords, TColor{color, color, color});
+                triangle(image, screen_coords, id_f);
             }
         }
 }
