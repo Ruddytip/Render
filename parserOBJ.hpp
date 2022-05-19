@@ -7,6 +7,7 @@ struct MetaInfoOBJ{
 	std::vector<Vec2d> uv;
 	std::vector<Vec3d> normals;
 	std::vector<face> faces;
+    std::vector<material> materials;
     Vec3d min, max;
 	Vec3d size;
 };
@@ -23,4 +24,5 @@ public:
 	void parser_VT(const std::string& line);
 	void parser_VN(const std::string& line);
 	void parser_FACES(const std::string& line);
+    void parser_MTL(const std::string& line);
 };

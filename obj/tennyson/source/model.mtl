@@ -1,140 +1,112 @@
 # Blender MTL File: 'None'
 # Material Count: 10
 
-newmtl 40_+Earrings.Earrings_1_0_0
+newmtl Ear
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.525969 0.636886 0.466778
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
 map_Kd pin.png
 map_Bump Material189_bump.png
-map_Ks Material189_specular.png
 map_d pin.png
 
-newmtl 40_+Shoes.Shoes_1_0_0
+newmtl Shoes
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.737108 0.506027 0.711105
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
 map_Kd pants.png
 map_Bump Material162(1)_bump.png
-map_Ks Material162(1)_specular.png
 map_d pants.png
 
-newmtl 40_Material115_1_0_0
+newmtl Iris
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.632241 0.670484 0.573755
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
 map_Kd iris.png
 map_Bump Material115_bump.png
-map_Ks Material115_specular.png
 map_d iris.png
 
-newmtl 40_Material127(1)_1_0_0
+newmtl Body_1
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.452185 0.600654 0.752660
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Kd body.png
+map_Kd body.bmp
 map_Bump Material127(1)_bump.png
-map_Ks Material127(1)_specular.png
-map_d body.png
+map_d body.bmp
 
-newmtl 40_Material127(2)_1_0_0
+newmtl Body_2
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.446441 0.718277 0.690295
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Kd body.png
+map_Kd body.bmp
 map_Bump Material127(2)_bump.png
-map_Ks Material127(2)_specular.png
-map_d body.png
+map_d body.bmp
 
-newmtl 40_Material127_1_0_0
+newmtl Body_3
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.790910 0.768239 0.459079
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Kd body.png
+map_Kd body.bmp
 map_Bump Material127_bump.png
-map_Ks Material127_specular.png
-map_d body.png
+map_d body.bmp
 
-newmtl 40_Material188_1_0_0
+newmtl Hair
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.409568 0.639759 0.563273
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Kd hair.png
+map_Kd hair.bmp
 map_Bump Material188_bump.png
-map_Ks Material188_specular.png
-map_d hair.png
+map_d hair.bmp
 
-newmtl 40_Pin_1_0_0
+newmtl Pin
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.636698 0.458368 0.571430
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
 map_Kd pin.png
 map_Bump Material189(1)_bump.png
-map_Ks Material189(1)_specular.png
 map_d pin.png
 
-newmtl 4_+Pants.Pants_0.1_0_0
+newmtl Pants
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.621561 0.776824 0.658886
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Kd pants.png
+map_Kd pants.bmp
 map_Bump pants_bump.png
-map_d pants.png
+map_d pants.bmp
 
-newmtl 4_+Shirt.Shirt_0.1_0_0
+newmtl Shirt
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.640846 0.456632 0.435737
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Kd shirt.png
+map_Kd shirt.bmp
 map_Bump shirt_bump.png
-map_d shirt.png
+map_d shirt.bmp

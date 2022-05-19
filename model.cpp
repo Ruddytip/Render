@@ -2,6 +2,7 @@
 #include <limits>
 #include "model.hpp"
 #include "parserOBJ.hpp"
+#include "parserMTL.hpp"
 
 void TModel::line(BMP& image, Vec2i t0, Vec2i t1, const TColor& color) {
     int x0 = t0.x, y0 = t0.y;
@@ -61,8 +62,7 @@ bool TModel::helpZ(const Vec2i scr, const Vec2i point, const Vec3d* t){
     return false;
 }
 
-void TModel::triangle(BMP& image, const Vec3d* t, const int id_f){
-    double z = (t[0].z + t[1].z + t[2].z) / 3;
+void TModel::triangle(BMP& image, const Vec3d* t, const TColor& color){
     Vec2i scr(image.getWidth(), image.getHeight());
     Vec3d Min = t[0], Max = t[0];
     for(int i = 1; i < 3; ++i){
@@ -73,26 +73,8 @@ void TModel::triangle(BMP& image, const Vec3d* t, const int id_f){
         for(int i = Min.x; i <= Max.x; ++i){
             Vec2i point(i, j);
             if(inTriangle(point, t))
-                if(helpZ(scr, point, t)){
-                    Vec3d n0 = normals[faces[id_f].id_vn[0]].norm();
-                    Vec3d n1 = normals[faces[id_f].id_vn[1]].norm();
-                    Vec3d n2 = normals[faces[id_f].id_vn[2]].norm();
-
-                    double w0 = !(Vec3d(i, j, z) - t[0]);
-                    double w1 = !(Vec3d(i, j, z) - t[1]);
-                    double w2 = !(Vec3d(i, j, z) - t[2]);
-
-                    Vec2d p(i, j);
-                    Vec3d AB(t[1] - t[0]);
-                    Vec3d AC(t[2] - t[0]);
-                    double q1 = (p.y * AC.x - p.x * AC.y) / (AB.y * AC.x - AB.x * AC.y);
-                    double q2 = (p.y - w1 * AB.y) / AC.y;
-
-                    Vec3d n4 = n0 * (45 - w0) + n1 * (45 - w1) + n2 * (45 - w2);
-                    
-                    byte1 c = 255. * n4.getCosAngle(Vec3d(0.0, 0.0, 1.0));
-                    image.setPixel(i, j, TColor{c, c, c});
-                }
+                if(helpZ(scr, point, t))
+                    image.setPixel(i, j, color);
         }
     }
 }
@@ -142,7 +124,7 @@ void TModel::drawFace(BMP& image, const Vec3d* t, const int id_f, BMP& texture, 
 void TModel::parserOBJFile(const std::string& filename){
     MetaInfoOBJ _data;
     ParserOBJ prs(&_data);
-    prs.parserFile(filename);
+    prs.parserFile(filename + "/source/model.obj");
     verts = _data.verts;
     uv = _data.uv;
     normals = _data.normals;
@@ -150,12 +132,19 @@ void TModel::parserOBJFile(const std::string& filename){
     min = _data.min;
     max = _data.max;
     size = _data.size;
+    materials = _data.materials;
+}
+
+void TModel::parserMTLFile(const std::string& filename){
+    ParserMTL prs(&materials);
+    prs.parserFile(filename, "/source/model.mtl");
 }
 
 TModel::TModel(const std::string& filename){
     max.x = max.y = max.z = -std::numeric_limits<double>::max();
     min.x = min.y = min.z =  std::numeric_limits<double>::max();
     parserOBJFile(filename);
+    parserMTLFile(filename);
     size = max - min;
 
     double f = 0;
@@ -249,7 +238,8 @@ void TModel::drawMeshTriangle(BMP& image){
             Vec3d normal = (world_coords[0] - world_coords[1]) ^ (world_coords[0] - world_coords[2]);
             double intensity = normal.getCosAngle(Vec3d(0.0, 0.0, 1.0));
             if (intensity > 0) {
-                triangle(image, screen_coords, id_f);
+                byte1 c = intensity * 255;
+                triangle(image, screen_coords, TColor{c, c, c});
             }
         }
 }
@@ -284,5 +274,35 @@ void TModel::drawMeshTexture(BMP& image, BMP& texture){
         if(intensity > 0)
             drawFace(image, screen_coords, id_f, texture, intensity);
     }
+}
 
+void TModel::prnmaterial(){
+    std::cout << materials.size() << std::endl;
+    for(int i = 0; i < materials.size(); ++i){
+        std::cout << i + 1 << std::endl;
+        std::cout << materials[i].name << std::endl;
+
+        std::cout << materials[i].Kd.x << ' ';
+        std::cout << materials[i].Kd.y << ' ';
+        std::cout << materials[i].Kd.z << std::endl;
+        
+        std::cout << materials[i].Ka.x << ' ';
+        std::cout << materials[i].Ka.y << ' ';
+        std::cout << materials[i].Ka.z << std::endl;
+        
+        std::cout << materials[i].Ks.x << ' ';
+        std::cout << materials[i].Ks.y << ' ';
+        std::cout << materials[i].Ks.z << std::endl;
+        
+        std::cout << materials[i].Ni << std::endl;
+        std::cout << materials[i].Ns << std::endl;
+        std::cout << materials[i].d << std::endl;
+        std::cout << materials[i].illum << std::endl;
+        std::cout << materials[i].map_Kd << std::endl;
+        std::cout << materials[i].map_Ka << std::endl;
+        std::cout << materials[i].map_Ks << std::endl;
+        std::cout << materials[i].map_D << std::endl;
+        std::cout << materials[i].map_Bump << std::endl;
+        std::cout << std::endl;
+    }
 }

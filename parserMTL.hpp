@@ -4,9 +4,9 @@
 
 class ParserMTL{
 private:
-    material* data;
+    std::vector<material>* data;
 public:
-    ParserMTL(material* _data);
+    ParserMTL(std::vector<material>* _data);
     ~ParserMTL();
-    void parserFile(const std::string& filename);
+    void parserFile(const std::string& directory, const std::string& filename);
 };

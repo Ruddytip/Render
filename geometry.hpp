@@ -93,9 +93,9 @@ struct material{
 	double Ni; // Показатель преломления (0.001-10)
 	double d; // Прозрачность (иногда это указывается Tr)
 	int illum; // Модель освещения (0-10)
-	int map_Ka; // Карта затенения 
-	int map_Kd; // Карта текстуры
-	int map_Ks; // Карта зеркального отражения
-	int map_D; // Карта прозрачности
-	int map_Bump; // Карта нормалей
+	std::string map_Ka; // Карта затенения 
+	std::string map_Kd; // Карта текстуры
+	std::string map_Ks; // Карта зеркального отражения
+	std::string map_D; // Карта прозрачности
+	std::string map_Bump; // Карта нормалей
 };
