@@ -32,13 +32,13 @@ void line(BMP& image, Vec2i t0, Vec2i t1, const TColor& color) {
 int main(){
     const unsigned long width  = 1000;
     const unsigned long height = 1000;
-    BMP output(width, height, TColor{0, 0, 0});
+    BMP output(width, height, TColor{100, 200, 100});
 
-    // TModel model("obj/african_head/source/african_head.obj");
-    TModel model("obj/tennyson");
+    TModel model("obj/african_head");
+    // TModel model("obj/tennyson");
     // TModel model("test.obj");
 
-    // BMP texture("obj/african_head/textures/african_head_diffuse.bmp");
+    BMP texture("obj/african_head/textures/african_head_diffuse.bmp");
     // BMP texture("obj/african_head/textures/african_head_nm_tangent.bmp");
     // BMP texture("obj/african_head/textures/african_head_spec.bmp");
     // BMP texture("obj/tennyson/textures/hair.bmp");
@@ -47,7 +47,7 @@ int main(){
     // BMP texture("obj/tennyson/textures/pants.bmp");
 
     // BMP texture("test_1.bmp");
-    BMP texture("test_2.bmp");
+    // BMP texture("test_2.bmp");
 
     // model.draw_UV_map(output);
     // model.drawMesh(output);
